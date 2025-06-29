@@ -2,19 +2,21 @@
 FROM node:18 AS build
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the project
 COPY . .
-
-# Build the Angular app
 RUN npm run build --prod
 
 # Stage 2: Serve the app with nginx
 FROM nginx:alpine
+
+# Copy custom nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy build output
 COPY --from=build /app/dist /usr/share/nginx/html
+
 
 
 
