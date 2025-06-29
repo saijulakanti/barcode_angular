@@ -8,14 +8,14 @@ RUN npm install
 COPY . .
 RUN npm run build --prod
 
-# Stage 2: Serve the app with nginx
+# Stage 2: Serve with nginx
 FROM nginx:alpine
 
-# Copy custom nginx.conf
+# Copy custom nginx.conf (listening on port 8080)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy build output
-COPY --from=build /app/dist/barcode-scanner-app /usr/share/nginx/html
+# ✅ Copy the correct folder with index.html
+COPY --from=build /app/dist/barcode-scanner-app/browser /usr/share/nginx/html
 
 
 
