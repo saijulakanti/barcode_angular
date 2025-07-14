@@ -10,8 +10,44 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('video') video!: ElementRef<HTMLVideoElement>;
   scannedBarcodes: string[] = [];
   showStartPage = true;
+  showStartPage = true;
   isScanning = false;
   codeReader: BrowserMultiFormatReader | null = null;
+
+  startScanning() {
+    this.showStartPage = false;
+    this.isScanning = true;
+  }
+
+  goBack() {
+    this.showStartPage = true;
+    this.isScanning = false;
+    this.scannedBarcodes = [];
+    
+    // Stop the camera stream
+    if (this.video?.nativeElement?.srcObject) {
+      const stream = this.video.nativeElement.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+    }
+    
+    // Reset the code reader
+    if (this.codeReader) {
+      this.codeReader.reset();
+    }
+  }
+
+  clearResults() {
+    this.scannedBarcodes = [];
+  }
+
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      // You could add a toast notification here
+      console.log('Copied to clipboard:', text);
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+    });
+  }
 
   startScanning() {
     this.showStartPage = false;
@@ -55,6 +91,12 @@ export class AppComponent implements AfterViewInit {
   initializeScanner() {
     if (!this.isScanning) return;
     
+    // Scanner will be initialized when user clicks start
+  }
+
+  initializeScanner() {
+    if (!this.isScanning) return;
+    
     this.codeReader = new BrowserMultiFormatReader();
 
     console.log('Starting barcode scanner...');
@@ -86,6 +128,12 @@ export class AppComponent implements AfterViewInit {
     }).catch((err) => {
       console.error('Camera error:', err);
     });
+  }
+
+  ngAfterViewChecked() {
+    if (this.isScanning && this.video && !this.video.nativeElement.srcObject) {
+      setTimeout(() => this.initializeScanner(), 100);
+    }
   }
 
   ngAfterViewChecked() {
