@@ -153,7 +153,9 @@
 
 .scanner-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin-bottom: 2rem;
 }
 
@@ -184,6 +186,13 @@
   height: 200px;
   border: 2px solid #a855f7;
   border-radius: 12px;
+}
+
+.scan-instruction {
+  margin-top: 0.75rem;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #5b21b6;
 }
 
 /* Results Section */
